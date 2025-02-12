@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Калори тооцогч</title>
+  <!-- Importing the Roboto font for a modern look -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    /* CSS Variables for consistent styling */
+    :root {
+      --primary-color: #ecf0f1;
+      --accent-color: #3498db;
+      --bg-color: #1a1a1a;
+      --container-bg: rgba(0, 0, 0, 0.7);
+      --border-radius: 12px;
+      --transition-speed: 0.3s;
+    }
+
+    /* Reset and global styles */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: var(--bg-color);
+      color: var(--primary-color);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    /* Calculator container styling */
+    .container {
+      background: var(--container-bg);
+      padding: 40px;
+      border-radius: var(--border-radius);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+      max-width: 400px;
+      width: 100%;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+      font-weight: 500;
+      font-size: 1.8rem;
+    }
+
+    label {
+      display: block;
+      margin: 16px 0 8px;
+      font-weight: 500;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 12px 16px;
+      font-size: 1rem;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: var(--border-radius);
+      background: transparent;
+      color: var(--primary-color);
+      transition: border var(--transition-speed);
+      outline: none;
+    }
+
+    input::placeholder {
+      color: rgba(236, 240, 241, 0.7);
+    }
+
+    input:focus, select:focus {
+      border-color: var(--accent-color);
+    }
+
+    /* Animated gradient button */
+    button {
+      width: 100%;
+      padding: 14px 16px;
+      margin-top: 24px;
+      border: none;
+      border-radius: var(--border-radius);
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      background: linear-gradient(45deg, #3498db, #8e44ad, #e74c3c);
+      background-size: 300% 300%;
+      animation: gradientAnimation 5s ease infinite;
+      transition: transform 0.3s ease;
+    }
+
+    button:hover {
+      transform: scale(1.05);
+    }
+
+    @keyframes gradientAnimation {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .result {
+      text-align: center;
+      font-size: 1.1rem;
+      margin-top: 24px;
+      padding: 12px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: var(--border-radius);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Калори тооцогч</h1>
+
+    <label for="gender">Хүйс</label>
+    <select id="gender">
+      <option value="male">Эрэгтэй</option>
+      <option value="female">Эмэгтэй</option>
+    </select>
+
+    <label for="age">Нас (жил)</label>
+    <input type="number" id="age" placeholder="Насаа оруулна уу" />
+
+    <label for="weight">Жин (кг)</label>
+    <input type="number" id="weight" placeholder="Жингээ оруулна уу" />
+
+    <label for="height">Өндөр (см)</label>
+    <input type="number" id="height" placeholder="Өндөрөө оруулна уу" />
+
+    <label for="activity">Хөдөлгөөний идэвхи</label>
+    <select id="activity">
+      <option value="1.2">Хөдөлгөөн багатай (дасгал хийдэггүй)</option>
+      <option value="1.375">Бага хөдөлгөөнтэй (1-3 хоног дасгал)</option>
+      <option value="1.55">Дунд хөдөлгөөнтэй (3-5 хоног дасгал)</option>
+      <option value="1.725">Өндөр хөдөлгөөнтэй (6-7 хоног дасгал)</option>
+      <option value="1.9">Их хөдөлгөөнтэй (хүнд ажлын хамт)</option>
+    </select>
+
+    <button onclick="calculateCalories()">Калори тооцоолох</button>
+
+    <div class="result" id="result"></div>
+  </div>
+
+  <script>
+    function calculateCalories() {
+      // Retrieve input values
+      const gender = document.getElementById('gender').value;
+      const age = parseFloat(document.getElementById('age').value);
+      const weight = parseFloat(document.getElementById('weight').value);
+      const height = parseFloat(document.getElementById('height').value);
+      const activity = parseFloat(document.getElementById('activity').value);
+
+      // Basic input validation
+      if (isNaN(age) || isNaN(weight) || isNaN(height)) {
+        alert("Бүх талбарыг бөглөнө үү.");
+        return;
+      }
+
+      let bmr;
+      // Calculate BMR using the Mifflin-St Jeor equation
+      if (gender === 'male') {
+        bmr = 10 * weight + 6.25 * height - 5 * age + 5;
+      } else {
+        bmr = 10 * weight + 6.25 * height - 5 * age - 161;
+      }
+
+      // Calculate daily calorie needs by multiplying BMR by activity factor
+      const dailyCalories = Math.round(bmr * activity);
+
+      // Display the result in Mongolian
+      document.getElementById('result').innerHTML =
+        `Таны өдөр тутмын калорийн хэрэгцээ ойролцоогоор <strong>${dailyCalories} калори</strong> байна.`;
+    }
+  </script>
+</body>
+</html>
